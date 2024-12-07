@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "csra-server"
+version = "0.0.1"
+description = "Collect NIH NCBI SRA metadata of several GEO studies in one search."
+authors = ["Marta Arcones <marta.arcones@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.115.6"
+aiosqlite = "^0.20.0"
+uvicorn = "^0.32.1"
+pydantic = "^2.10.3"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.0"
+pytest-asyncio = "^0.21"
+httpx = "^0.24"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
