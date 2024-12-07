@@ -11,7 +11,7 @@ class ItemUpdate(BaseModel):
     description: str
 
 # Schema for reading an item (response model)
-class Item(BaseModel):
+class ItemResponse(BaseModel):
     id: int
     name: str
     description: str
