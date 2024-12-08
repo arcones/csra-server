@@ -1,15 +1,20 @@
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-# SQLite URL (using in-memory database for simplicity)
-DATABASE_URL = "sqlite+aiosqlite:///./test.db"
+DATABASE_URL = "sqlite+aiosqlite:///./csra.db"
 
-# Create async engine for SQLite
 engine: AsyncEngine = create_async_engine(DATABASE_URL, echo=True, future=True)
 
-# Create sessionmaker for async use
 SessionLocal = sessionmaker(
-    engine,
+    bind=engine,  # Use 'bind' to associate the engine
     class_=AsyncSession,  # AsyncSession for asynchronous DB operations
-    expire_on_commit=False,
+    expire_on_commit=False
 )
+
+# Declarative base for defining models
+Base = declarative_base()
+
+# Function to initialize the database
+async def create_database():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
