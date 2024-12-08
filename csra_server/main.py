@@ -1,25 +1,32 @@
 from contextlib import asynccontextmanager
+from typing import List
 
-from fastapi import FastAPI, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
+from fastapi import FastAPI
 
-from csra_server import models
-from csra_server.database import SessionLocal, create_database
-from csra_server.schemas import ItemResponse
+from csra_server.db import create_db_if_not_exists, db_get_tasks, db_create_task
+from csra_server.models.task import Task
+
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
-    await create_database()
+async def lifespan(fastapi_app: FastAPI):
+    await create_db_if_not_exists()
     yield
+
+
 app = FastAPI(lifespan=lifespan)
 
-async def get_db():
-    async with SessionLocal() as db:
-        yield db
 
-@app.get("/items/", response_model=list[ItemResponse])
-async def get_items(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(models.Item))
-    items = result.scalars().all()
-    return items
+@app.get("/")
+async def root():
+    return {"message": "Welcome to CSRA Server. Use the CLI to interact with the server."}
+
+
+@app.get("/tasks/", response_model=List[Task])
+async def get_tasks():
+    return await db_get_tasks()
+
+
+@app.post("/tasks/", response_model=Task)
+async def create_task(task: Task):
+    await db_create_task(task)
+    return task
