@@ -26,7 +26,7 @@ async def get_tasks():
     return await db_get_tasks()
 
 
-@app.post("/tasks/", response_model=Task)
+@app.post("/task/", response_model=Task)
 async def create_task(task: Task):
     await db_create_task(task)
     return task

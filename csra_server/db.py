@@ -39,5 +39,5 @@ async def db_get_tasks() -> List[Task]:
 
 async def db_create_task(task: Task) -> None:
     async with aiosqlite.connect(DB_URL) as db:
-        await db.execute(f"INSERT INTO tasks VALUES ({task.query_string})")
+        await db.execute(f"INSERT INTO tasks (query_string) VALUES ('{task.query_string}')")
         await db.commit()
