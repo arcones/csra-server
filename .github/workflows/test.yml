@@ -1,4 +1,4 @@
-name: test-build-publish
+name: test
 on: [ push ]
 jobs:
   test-build:
@@ -7,7 +7,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Tests & Build
+      - name: Tests
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
