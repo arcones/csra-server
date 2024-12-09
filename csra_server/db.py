@@ -3,14 +3,13 @@ from typing import List
 
 import aiosqlite
 
+from csra_server.env import get_db_path
 from csra_server.models.task import Task
 from csra_server.models.task_status import TaskStatus
 
-DB_URL = "csra.db"
-
 
 async def create_db_if_not_exists() -> None:
-    async with aiosqlite.connect(DB_URL) as db:
+    async with aiosqlite.connect(get_db_path()) as db:
         await db.execute("""
         CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,7 +22,7 @@ async def create_db_if_not_exists() -> None:
 
 
 async def db_get_tasks() -> List[Task]:
-    async with aiosqlite.connect(DB_URL) as db:
+    async with aiosqlite.connect(get_db_path()) as db:
         async with db.execute("SELECT * FROM tasks") as cursor:
             rows = await cursor.fetchall()
             tasks = [
@@ -38,6 +37,6 @@ async def db_get_tasks() -> List[Task]:
 
 
 async def db_create_task(task: Task) -> None:
-    async with aiosqlite.connect(DB_URL) as db:
+    async with aiosqlite.connect(get_db_path()) as db:
         await db.execute(f"INSERT INTO tasks (query_string) VALUES ('{task.query_string}')")
         await db.commit()
