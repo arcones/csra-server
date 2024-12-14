@@ -1,8 +1,10 @@
+import asyncio
 from contextlib import asynccontextmanager
 from typing import List
 
 from fastapi import FastAPI
 
+from csra_server.core import background_task
 from csra_server.db import create_db_if_not_exists, db_get_tasks, db_create_task
 from csra_server.models.task import Task
 
@@ -10,7 +12,13 @@ from csra_server.models.task import Task
 @asynccontextmanager
 async def lifespan(fastapi_app: FastAPI):
     await create_db_if_not_exists()
+    background_task_instance = asyncio.create_task(background_task())
     yield
+    background_task_instance.cancel()
+    try:
+        await background_task_instance
+    except asyncio.CancelledError:
+        print("Background task cancelled.")
 
 
 app = FastAPI(lifespan=lifespan)
