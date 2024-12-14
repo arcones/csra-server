@@ -4,7 +4,7 @@ from typing import List
 
 from fastapi import FastAPI
 
-from csra_server.core import background_task
+from csra_server.background import background_task
 from csra_server.db import create_db_if_not_exists, db_get_tasks, db_create_task
 from csra_server.models.task import Task
 

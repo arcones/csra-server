@@ -27,6 +27,7 @@ async def db_get_tasks() -> List[Task]:
             rows = await cursor.fetchall()
             tasks = [
                 Task(
+                    id=row[0],
                     query_string=row[1],
                     created_on=datetime.fromisoformat(row[2]),
                     status=TaskStatus(row[3])
@@ -39,4 +40,10 @@ async def db_get_tasks() -> List[Task]:
 async def db_create_task(task: Task) -> None:
     async with aiosqlite.connect(get_db_path()) as db:
         await db.execute(f"INSERT INTO tasks (query_string) VALUES ('{task.query_string}')")
+        await db.commit()
+
+
+async def db_update_task_status(task: Task, status: TaskStatus) -> None:
+    async with aiosqlite.connect(get_db_path()) as db:
+        await db.execute(f"UPDATE tasks SET STATUS = '{status.name}' WHERE id = '{task.id}'")
         await db.commit()
